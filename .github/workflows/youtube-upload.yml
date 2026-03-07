@@ -1,0 +1,50 @@
+name: Upload to YouTube
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'videos/**'
+  workflow_dispatch:
+    inputs:
+      video_file:
+        description: 'Video file path in repository'
+        required: true
+        type: string
+      video_title:
+        description: 'Video title'
+        required: true
+        type: string
+      video_description:
+        description: 'Video description'
+        required: false
+        type: string
+      video_tags:
+        description: 'Video tags (comma separated)'
+        required: false
+        type: string
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
+      
+      - name: Upload to YouTube
+        env:
+          YOUTUBE_CLIENT_SECRETS: ${{ secrets.YOUTUBE_CLIENT_SECRETS }}
+          YOUTUBE_CREDENTIALS: ${{ secrets.YOUTUBE_CREDENTIALS }}
+        run: |
+          python scripts/upload_video.py
