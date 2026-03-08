@@ -47,4 +47,9 @@ jobs:
           YOUTUBE_CLIENT_SECRETS: ${{ secrets.YOUTUBE_CLIENT_SECRETS }}
           YOUTUBE_CREDENTIALS: ${{ secrets.YOUTUBE_CREDENTIALS }}
         run: |
-          python scripts/upload_video.py
+          for video in videos/*; do
+            if [ -f "$video" ]; then
+              echo "Uploading $video..."
+              python scripts/upload_video.py "$video"
+            fi
+          done
